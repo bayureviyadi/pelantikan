@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Uji Fisik — Panel Pelatih</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#12151a;
+    --panel:#1b1f27;
+    --panel-2:#20242e;
+    --border:#2b303b;
+    --text:#eee9df;
+    --text-dim:#8d94a1;
+    --red:#b3202b;
+    --gold:#c9a24d;
+    --c0:#d64545; /* Sangat Kurang */
+    --c1:#e08a3c; /* Kurang */
+    --c2:#d9b54a; /* Cukup */
+    --c3:#7fb069; /* Baik */
+    --c4:#3f9463; /* Baik Sekali */
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(179,32,43,0.15), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    padding-bottom:60px;
+  }
+  header{
+    padding:36px 20px 24px;
+    border-bottom:1px solid var(--border);
+    position:relative;
+    overflow:hidden;
+  }
+  header::before{
+    content:"";
+    position:absolute; inset:0;
+    background:repeating-linear-gradient(135deg, rgba(201,162,77,0.04) 0 2px, transparent 2px 14px);
+    pointer-events:none;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:.18em;
+    color:var(--gold);
+    text-transform:uppercase;
+    margin-bottom:8px;
+  }
+  h1{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(38px,8vw,58px);
+    letter-spacing:.03em;
+    margin:0 0 6px;
+    line-height:.95;
+  }
+  header p{
+    color:var(--text-dim);
+    margin:0;
+    max-width:480px;
+    font-size:14px;
+  }
+  main{
+    max-width:760px;
+    margin:0 auto;
+    padding:24px 16px 0;
+  }
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:20px;
+  }
+  .card h2{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:22px;
+    letter-spacing:.02em;
+    margin:0 0 16px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .card h2 .tag{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    color:var(--gold);
+    border:1px solid var(--border);
+    padding:2px 6px;
+    border-radius:4px;
+    letter-spacing:.08em;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
+  .grid.g3{grid-template-columns:1.4fr 1fr 1fr;}
+  label{
+    display:block;
+    font-size:12px;
+    color:var(--text-dim);
+    margin-bottom:5px;
+  }
+  input, select{
+    width:100%;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:11px 12px;
+    border-radius:8px;
+    font-size:15px;
+    font-family:'Inter',sans-serif;
+  }
+  input:focus, select:focus{
+    outline:none;
+    border-color:var(--gold);
+  }
+  .field{margin-bottom:14px;}
+  .test-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+  @media (max-width:520px){
+    .test-grid{grid-template-columns:1fr;}
+    .grid.g3{grid-template-columns:1fr 1fr;}
+  }
+  .test-field label{
+    display:flex;
+    justify-content:space-between;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+  }
+  .unit{color:var(--text-dim);}
+  .btn{
+    width:100%;
+    background:linear-gradient(135deg, var(--red), #8a1620);
+    color:#fff;
+    border:none;
+    padding:14px;
+    border-radius:10px;
+    font-family:'Bebas Neue',sans-serif;
+    font-size:20px;
+    letter-spacing:.05em;
+    cursor:pointer;
+    margin-top:6px;
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn.secondary{
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:0;
+    padding:10px;
+  }
+  .warn{
+    background:rgba(179,32,43,0.12);
+    border:1px solid rgba(179,32,43,0.4);
+    color:#ff8f8f;
+    padding:10px 12px;
+    border-radius:8px;
+    font-size:13px;
+    margin-bottom:14px;
+  }
+  /* Results */
+  #results{display:none;}
+  .result-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-bottom:16px;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .result-head .name{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:30px;
+    line-height:1;
+  }
+  .result-head .meta{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--text-dim);
+  }
+  .overall-badge{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    padding:8px 14px;
+    border-radius:8px;
+    font-weight:700;
+    letter-spacing:.05em;
+    white-space:nowrap;
+  }
+  .test-row{
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:14px;
+    margin-bottom:10px;
+    background:var(--panel-2);
+  }
+  .test-row-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:10px;
+  }
+  .test-row-top .tname{font-weight:600; font-size:14px;}
+  .test-row-top .tval{
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+    color:var(--text-dim);
+  }
+  .gauge{
+    display:flex;
+    gap:4px;
+  }
+  .gauge .seg{
+    flex:1;
+    height:8px;
+    border-radius:3px;
+    background:#2b303b;
+  }
+  .gauge .seg.on{background:var(--seg-color, var(--gold));}
+  .cat-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    margin-top:8px;
+    letter-spacing:.04em;
+    font-weight:600;
+  }
+  .empty-note{
+    color:var(--text-dim);
+    font-size:12px;
+    font-style:italic;
+  }
+  /* Roster */
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+  }
+  th{
+    text-align:left;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    color:var(--text-dim);
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    padding:8px 6px;
+    border-bottom:1px solid var(--border);
+  }
+  td{
+    padding:10px 6px;
+    border-bottom:1px solid var(--border);
+  }
+  .badge{
+    display:inline-block;
+    padding:3px 8px;
+    border-radius:5px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    font-weight:700;
+  }
+  .del{
+    background:none;
+    border:none;
+    color:var(--text-dim);
+    cursor:pointer;
+    font-size:16px;
+  }
+  .del:hover{color:var(--red);}
+  .roster-empty{
+    color:var(--text-dim);
+    font-size:13px;
+    padding:10px 0;
+  }
+  .sync-note{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--text-dim);
+    margin-top:-4px;
+    margin-bottom:14px;
+  }
+  .sync-note.ok{color:var(--c4);}
+  .sync-note.err{color:var(--c0);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Panel Pelatih · 6 Instrumen Tes</div>
+  <h1>UJI FISIK ATLET</h1>
+  <p>Masukkan hasil tes, kategori keluar otomatis berdasarkan norma usia &amp; jenis kelamin.</p>
+</header>
+
+<main>
+
+  <div class="card">
+    <h2>Data Atlet <span class="tag">01</span></h2>
+    <div class="field">
+      <label>Nama</label>
+      <input id="f-nama" type="text" placeholder="Nama atlet">
+    </div>
+    <div class="grid g3">
+      <div class="field">
+        <label>Usia (tahun)</label>
+        <input id="f-usia" type="number" min="6" max="25" placeholder="cth. 15">
+      </div>
+      <div class="field">
+        <label>Jenis Kelamin</label>
+        <select id="f-jk">
+          <option value="L">Laki-laki</option>
+          <option value="P">Perempuan</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Tanggal</label>
+        <input id="f-tanggal" type="date">
+      </div>
+    </div>
+    <div id="age-warn" class="warn" style="display:none;">
+      Norma penilaian hanya tersedia untuk usia 6–25 tahun. Kategori tidak dapat dihitung untuk usia ini.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Hasil Tes <span class="tag">02</span></h2>
+    <div class="test-grid">
+      <div class="test-field">
+        <label>Sit-up 30 Detik <span class="unit">kali</span></label>
+        <input id="t-situp" type="number" step="1" placeholder="jumlah">
+      </div>
+      <div class="test-field">
+        <label>Push-up Maksimal <span class="unit">kali</span></label>
+        <input id="t-pushup" type="number" step="1" placeholder="jumlah">
+      </div>
+      <div class="test-field">
+        <label>Illinois Agility <span class="unit">detik</span></label>
+        <input id="t-illinois" type="number" step="0.01" placeholder="cth. 17.8">
+      </div>
+      <div class="test-field">
+        <label>Sprint 20 Meter <span class="unit">detik</span></label>
+        <input id="t-sprint20" type="number" step="0.01" placeholder="cth. 3.65">
+      </div>
+      <div class="test-field">
+        <label>Bleep Test <span class="unit">level</span></label>
+        <input id="t-bleep" type="number" step="0.1" placeholder="cth. 8.4">
+      </div>
+      <div class="test-field">
+        <label>Single Leg Stance <span class="unit">detik</span></label>
+        <input id="t-singleleg" type="number" step="1" placeholder="rata-rata dua kaki">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Tes Keagamaan &amp; Ketahanan <span class="tag">03</span></h2>
+    <div class="grid">
+      <div class="field">
+        <label>Tingkatan Sabuk</label>
+        <select id="t-sabuk">
+          <option value="">— pilih sabuk —</option>
+          <option value="Putih">Putih (target 5 surat)</option>
+          <option value="Merah">Merah (target 10 surat)</option>
+          <option value="Kuning">Kuning (target 15 surat)</option>
+          <option value="Biru">Biru (target 20 surat)</option>
+          <option value="Coklat">Coklat (target 25 surat)</option>
+          <option value="Hitam">Hitam (target 30 surat)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Jumlah Surat Dihafal</label>
+        <input id="t-hafal" type="number" step="1" placeholder="jumlah surat">
+      </div>
+    </div>
+    <div class="field">
+      <label>Tes Patahan</label>
+      <select id="t-patahan">
+        <option value="">— pilih hasil —</option>
+        <option value="ya">Patah (memenuhi)</option>
+        <option value="tidak">Tidak Patah</option>
+      </select>
+    </div>
+    <div class="empty-note">Hafalan: memenuhi target sabuk → Baik Sekali, tidak memenuhi → Kurang. Patahan: patah → Baik Sekali, tidak patah → Kurang.</div>
+  </div>
+
+  <button class="btn" onclick="hitungHasil()">HITUNG HASIL</button>
+  <button class="btn secondary" style="margin-top:8px;" onclick="resetForm()">Bersihkan Form</button>
+
+  <div id="results" class="card">
+    <div class="result-head">
+      <div>
+        <div class="name" id="r-nama">—</div>
+        <div class="meta" id="r-meta">—</div>
+      </div>
+      <div class="overall-badge" id="r-overall">—</div>
+    </div>
+    <div id="r-rows"></div>
+    <button class="btn secondary" onclick="simpanKeRoster()">Simpan ke Daftar Atlet</button>
+  </div>
+
+  <div class="card">
+    <h2>Daftar Atlet Tersimpan <span class="tag">03</span></h2>
+    <div id="sync-status" class="sync-note">Menghubungkan ke Firebase…</div>
+    <div id="roster-wrap">
+      <div class="roster-empty">Memuat data...</div>
+    </div>
+  </div>
+
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+import {
+  getDatabase, ref, push, set, remove, onValue
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDPI3JDgJCmTomJ8muev2ld39POwEdsVwk",
+  authDomain: "tesp-529b8.firebaseapp.com",
+  databaseURL: "https://tesp-529b8-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "tesp-529b8",
+  storageBucket: "tesp-529b8.firebasestorage.app",
+  messagingSenderId: "586985292162",
+  appId: "1:586985292162:web:84a01d8724c25f98ef8f9b",
+  measurementId: "G-XF0N4NFY0T"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const rosterRef = ref(db, 'uji_fisik');
+
+const CATS = ["Sangat Kurang","Kurang","Cukup","Baik","Baik Sekali"];
+const CAT_COLORS = ["var(--c0)","var(--c1)","var(--c2)","var(--c3)","var(--c4)"];
+
+const NORMS = {
+  situp: {
+    '6-8':{L:[4,7,10,13],P:[3,6,9,12]},
+    '9-11':{L:[6,9,13,17],P:[5,8,12,16]},
+    '12-14':{L:[8,12,16,20],P:[7,11,15,19]},
+    '15-17':{L:[9,13,18,23],P:[8,12,17,21]},
+    '18-25':{L:[10,14,19,24],P:[9,13,17,22]}
+  },
+  pushup: {
+    '6-8':{L:[2,5,8,12],P:[1,4,7,10]},
+    '9-11':{L:[4,8,12,16],P:[3,7,11,14]},
+    '12-14':{L:[8,12,16,20],P:[6,10,14,18]},
+    '15-17':{L:[10,15,20,26],P:[8,13,18,23]},
+    '18-25':{L:[12,17,23,30],P:[10,15,20,26]}
+  },
+  illinois: {
+    '6-8':{L:[26.0,24.0,22.0,20.0],P:[27.0,25.0,23.0,21.0]},
+    '9-11':{L:[23.5,22.0,20.5,19.0],P:[24.5,23.0,21.0,19.5]},
+    '12-14':{L:[20.5,19.0,17.5,16.0],P:[21.5,20.0,18.0,16.5]},
+    '15-17':{L:[19.5,18.0,16.5,15.0],P:[20.5,19.0,17.0,15.5]},
+    '18-25':{L:[19.0,17.6,16.0,14.5],P:[20.0,18.6,17.0,15.5]}
+  },
+  sprint20: {
+    '6-8':{L:[5.20,4.80,4.40,4.10],P:[5.40,5.00,4.60,4.25]},
+    '9-11':{L:[4.60,4.30,3.95,3.65],P:[4.80,4.50,4.10,3.80]},
+    '12-14':{L:[4.20,3.90,3.60,3.30],P:[4.40,4.10,3.75,3.45]},
+    '15-17':{L:[4.05,3.78,3.50,3.25],P:[4.20,3.92,3.60,3.35]},
+    '18-25':{L:[4.00,3.72,3.45,3.20],P:[4.10,3.82,3.55,3.30]}
+  },
+  bleep: {
+    '6-8':{L:[3.5,4.5,5.5,6.5],P:[3.0,4.0,5.0,6.0]},
+    '9-11':{L:[4.5,5.5,6.8,8.0],P:[4.0,5.0,6.3,7.5]},
+    '12-14':{L:[5.0,6.5,8.0,9.5],P:[4.5,6.0,7.5,9.0]},
+    '15-17':{L:[6.0,7.5,9.0,10.5],P:[5.5,7.0,8.5,10.0]},
+    '18-25':{L:[6.5,8.0,9.5,11.0],P:[6.0,7.5,9.0,10.5]}
+  },
+  singleleg: {
+    '6-8':{L:[4,8,15,25],P:[5,9,16,26]},
+    '9-11':{L:[6,10,18,30],P:[7,11,19,32]},
+    '12-14':{L:[8,15,25,40],P:[8,15,25,40]},
+    '15-17':{L:[9,16,28,42],P:[9,16,28,42]},
+    '18-25':{L:[10,18,30,45],P:[10,18,30,45]}
+  }
+};
+
+const TEST_META = [
+  {key:'situp', label:'Sit-up 30 Detik', unit:'kali', direction:'higher'},
+  {key:'pushup', label:'Push-up Maksimal', unit:'kali', direction:'higher'},
+  {key:'illinois', label:'Illinois Agility Test', unit:'detik', direction:'lower'},
+  {key:'sprint20', label:'Sprint 20 Meter', unit:'detik', direction:'lower'},
+  {key:'bleep', label:'Bleep Test', unit:'level', direction:'higher'},
+  {key:'singleleg', label:'Single Leg Stance', unit:'detik', direction:'higher'}
+];
+
+function getAgeGroup(age){
+  if(age>=6 && age<=8) return '6-8';
+  if(age>=9 && age<=11) return '9-11';
+  if(age>=12 && age<=14) return '12-14';
+  if(age>=15 && age<=17) return '15-17';
+  if(age>=18 && age<=25) return '18-25';
+  return null;
+}
+
+function classify(value, bounds, direction){
+  if(direction==='higher'){
+    if(value<=bounds[0]) return 0;
+    if(value<=bounds[1]) return 1;
+    if(value<=bounds[2]) return 2;
+    if(value<=bounds[3]) return 3;
+    return 4;
+  } else {
+    if(value>=bounds[0]) return 0;
+    if(value>=bounds[1]) return 1;
+    if(value>=bounds[2]) return 2;
+    if(value>=bounds[3]) return 3;
+    return 4;
+  }
+}
+
+document.getElementById('f-usia').addEventListener('input', ()=>{
+  const age = parseFloat(document.getElementById('f-usia').value);
+  const warn = document.getElementById('age-warn');
+  warn.style.display = (age && !getAgeGroup(age)) ? 'block' : 'none';
+});
+
+let lastResult = null;
+
+function hitungHasil(){
+  const nama = document.getElementById('f-nama').value.trim() || 'Tanpa Nama';
+  const usia = parseFloat(document.getElementById('f-usia').value);
+  const jk = document.getElementById('f-jk').value;
+  const tanggal = document.getElementById('f-tanggal').value || new Date().toISOString().slice(0,10);
+
+  if(!usia){ alert('Isi usia atlet terlebih dahulu.'); return; }
+  const ageGroup = getAgeGroup(usia);
+  if(!ageGroup){ alert('Norma hanya tersedia untuk usia 6–25 tahun.'); return; }
+
+  const rows = [];
+  let catSum = 0, catCount = 0;
+
+  TEST_META.forEach(t=>{
+    const raw = document.getElementById('t-'+t.key).value;
+    if(raw===''){ rows.push({...t, filled:false}); return; }
+    const val = parseFloat(raw);
+    const bounds = NORMS[t.key][ageGroup][jk];
+    const catIdx = classify(val, bounds, t.direction);
+    catSum += catIdx; catCount++;
+    rows.push({...t, filled:true, val, catIdx});
+  });
+
+  // Tes keagamaan & ketahanan
+  const sabukTarget = { Putih:5, Merah:10, Kuning:15, Biru:20, Coklat:25, Hitam:30 };
+  const sabuk = document.getElementById('t-sabuk').value;
+  const hafalRaw = document.getElementById('t-hafal').value;
+  if(sabuk && hafalRaw!==''){
+    const hafal = parseFloat(hafalRaw);
+    const target = sabukTarget[sabuk];
+    const memenuhi = hafal >= target;
+    const catIdx = memenuhi ? 4 : 1;
+    rows.push({key:'hafalan', label:`Hafalan (Sabuk ${sabuk})`, unit:'surat', filled:true, val:hafal, catIdx});
+    catSum += catIdx; catCount++;
+  } else {
+    rows.push({key:'hafalan', label:'Hafalan', unit:'surat', filled:false});
+  }
+  const patahan = document.getElementById('t-patahan').value;
+  if(patahan){
+    const catIdx = patahan==='ya' ? 4 : 1;
+    rows.push({key:'patahan', label:'Tes Patahan', unit:'', filled:true, val:(patahan==='ya'?'Patah':'Tidak Patah'), catIdx});
+    catSum += catIdx; catCount++;
+  } else {
+    rows.push({key:'patahan', label:'Tes Patahan', unit:'', filled:false});
+  }
+
+  const overallIdx = catCount ? Math.round(catSum/catCount) : null;
+
+  lastResult = {nama, usia, jk, tanggal, ageGroup, rows, overallIdx};
+  renderResult(lastResult);
+}
+
+function renderResult(r){
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('r-nama').textContent = r.nama;
+  document.getElementById('r-meta').textContent =
+    `${r.usia} th · ${r.jk==='L'?'Laki-laki':'Perempuan'} · kelompok usia ${r.ageGroup} · ${r.tanggal}`;
+
+  const overallEl = document.getElementById('r-overall');
+  if(r.overallIdx===null){
+    overallEl.textContent = 'BELUM ADA DATA';
+    overallEl.style.background = '#2b303b';
+    overallEl.style.color = 'var(--text-dim)';
+  } else {
+    overallEl.textContent = CATS[r.overallIdx].toUpperCase();
+    overallEl.style.background = CAT_COLORS[r.overallIdx];
+    overallEl.style.color = '#12151a';
+  }
+
+  const wrap = document.getElementById('r-rows');
+  wrap.innerHTML = '';
+  r.rows.forEach(row=>{
+    const div = document.createElement('div');
+    div.className = 'test-row';
+    if(!row.filled){
+      div.innerHTML = `
+        <div class="test-row-top">
+          <span class="tname">${row.label}</span>
+          <span class="empty-note">tidak diisi</span>
+        </div>`;
+      wrap.appendChild(div);
+      return;
+    }
+    let segs = '';
+    for(let i=0;i<5;i++){
+      segs += `<div class="seg${i<=row.catIdx?' on':''}" style="--seg-color:${CAT_COLORS[row.catIdx]}"></div>`;
+    }
+    div.innerHTML = `
+      <div class="test-row-top">
+        <span class="tname">${row.label}</span>
+        <span class="tval">${row.val} ${row.unit}</span>
+      </div>
+      <div class="gauge">${segs}</div>
+      <div class="cat-label" style="color:${CAT_COLORS[row.catIdx]}">${CATS[row.catIdx]}</div>
+    `;
+    wrap.appendChild(div);
+  });
+}
+
+function resetForm(){
+  ['f-nama','f-usia','f-tanggal','t-situp','t-pushup','t-illinois','t-sprint20','t-bleep','t-singleleg','t-hafal'].forEach(id=>{
+    document.getElementById(id).value='';
+  });
+  document.getElementById('f-jk').value='L';
+  document.getElementById('t-sabuk').value='';
+  document.getElementById('t-patahan').value='';
+  document.getElementById('age-warn').style.display='none';
+  document.getElementById('results').style.display='none';
+  lastResult = null;
+}
+
+// ---------- Roster (Firebase Realtime Database) ----------
+function setSyncStatus(msg, cls){
+  const el = document.getElementById('sync-status');
+  el.textContent = msg;
+  el.className = 'sync-note' + (cls ? ' '+cls : '');
+}
+
+onValue(rosterRef, (snapshot) => {
+  const data = snapshot.val() || {};
+  const entries = Object.keys(data).map(id => ({...data[id], id}));
+  entries.sort((a,b)=> (b.tanggal||'').localeCompare(a.tanggal||''));
+  renderRoster(entries);
+  setSyncStatus('Tersinkron dengan Firebase · ' + entries.length + ' atlet', 'ok');
+}, (err) => {
+  console.error(err);
+  setSyncStatus('Gagal terhubung ke Firebase.', 'err');
+});
+
+function renderRoster(entries){
+  const wrap = document.getElementById('roster-wrap');
+  if(entries.length===0){
+    wrap.innerHTML = '<div class="roster-empty">Belum ada atlet tersimpan.</div>';
+    return;
+  }
+  let html = `<table><thead><tr>
+    <th>Nama</th><th>Usia/JK</th><th>Tanggal</th><th>Rata-rata</th><th></th>
+  </tr></thead><tbody>`;
+  entries.forEach(e=>{
+    const badge = e.overallIdx!==null && e.overallIdx!==undefined
+      ? `<span class="badge" style="background:${CAT_COLORS[e.overallIdx]};color:#12151a;">${CATS[e.overallIdx]}</span>`
+      : '<span class="empty-note">—</span>';
+    html += `<tr>
+      <td>${e.nama}</td>
+      <td>${e.usia} / ${e.jk}</td>
+      <td>${e.tanggal}</td>
+      <td>${badge}</td>
+      <td><button class="del" data-id="${e.id}" title="Hapus">✕</button></td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+  wrap.querySelectorAll('.del').forEach(btn=>{
+    btn.addEventListener('click', ()=> hapusAtlet(btn.dataset.id));
+  });
+}
+
+async function simpanKeRoster(){
+  if(!lastResult){ alert('Hitung hasil terlebih dahulu.'); return; }
+  try{
+    const newRef = push(rosterRef);
+    await set(newRef, lastResult);
+    alert('Tersimpan ke daftar atlet (Firebase).');
+  }catch(e){
+    console.error(e);
+    alert('Terjadi kesalahan saat menyimpan ke Firebase.');
+  }
+}
+
+async function hapusAtlet(id){
+  if(!confirm('Hapus data atlet ini?')) return;
+  try{
+    await remove(ref(db, 'uji_fisik/'+id));
+  }catch(e){
+    console.error(e);
+    alert('Gagal menghapus data.');
+  }
+}
+
+// Expose functions used by inline onclick handlers
+window.hitungHasil = hitungHasil;
+window.resetForm = resetForm;
+window.simpanKeRoster = simpanKeRoster;
+window.hapusAtlet = hapusAtlet;
+</script>
+
+</body>
+</html>
