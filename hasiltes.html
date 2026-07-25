@@ -218,7 +218,12 @@
     text-align:center;
   }
 
-  .del{
+  .action-row{
+    display:flex;
+    gap:8px;
+    margin-top:12px;
+  }
+  .del, .edit-btn{
     background:none;
     border:1px solid var(--border);
     color:var(--text-dim);
@@ -227,9 +232,86 @@
     font-family:'JetBrains Mono',monospace;
     padding:6px 10px;
     border-radius:6px;
-    margin-top:12px;
   }
   .del:hover{ color:var(--red); border-color:var(--red); }
+  .edit-btn:hover{ color:var(--gold); border-color:var(--gold); }
+
+  .edit-form{ margin-top:4px; }
+  .edit-grid{
+    display:grid;
+    grid-template-columns:1.4fr 1fr 1fr;
+    gap:10px;
+    margin-bottom:12px;
+  }
+  .test-edit-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:6px;
+  }
+  @media (max-width:560px){
+    .edit-grid{ grid-template-columns:1fr 1fr; }
+    .test-edit-grid{ grid-template-columns:1fr; }
+  }
+  .edit-field{ margin-bottom:0; }
+  .edit-field label{
+    display:flex;
+    justify-content:space-between;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--text-dim);
+    margin-bottom:5px;
+  }
+  .edit-field .unit{ color:var(--text-dim); }
+  .edit-subhead{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin:14px 0 8px;
+  }
+  .edit-warn{
+    display:none;
+    background:rgba(179,32,43,0.12);
+    border:1px solid rgba(179,32,43,0.4);
+    color:#ff8f8f;
+    padding:8px 10px;
+    border-radius:8px;
+    font-size:12px;
+    margin-bottom:10px;
+  }
+  .edit-actions{
+    display:flex;
+    gap:8px;
+    margin-top:14px;
+  }
+  .btn-save{
+    flex:1;
+    background:linear-gradient(135deg, var(--red), #8a1620);
+    color:#fff;
+    border:none;
+    padding:12px;
+    border-radius:10px;
+    font-family:'Bebas Neue',sans-serif;
+    font-size:17px;
+    letter-spacing:.05em;
+    cursor:pointer;
+  }
+  .btn-save:active{ transform:translateY(1px); }
+  .btn-cancel{
+    flex:1;
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    padding:12px;
+    border-radius:10px;
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .btn-cancel:hover{ color:var(--text); border-color:var(--text-dim); }
 </style>
 </head>
 <body>
@@ -288,7 +370,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
-import { getDatabase, ref, onValue, remove } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
+import { getDatabase, ref, onValue, remove, set } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDPI3JDgJCmTomJ8muev2ld39POwEdsVwk",
@@ -308,8 +390,95 @@ const rosterRef = ref(db, 'uji_fisik');
 const CATS = ["Sangat Kurang","Kurang","Cukup","Baik","Baik Sekali"];
 const CAT_COLORS = ["var(--c0)","var(--c1)","var(--c2)","var(--c3)","var(--c4)"];
 
+// ---------- Norma penilaian & logika klasifikasi (identik dengan inputtes.html) ----------
+const NORMS = {
+  situp: {
+    '6-8':{L:[4,7,10,13],P:[3,6,9,12]},
+    '9-11':{L:[6,9,13,17],P:[5,8,12,16]},
+    '12-14':{L:[8,12,16,20],P:[7,11,15,19]},
+    '15-17':{L:[9,13,18,23],P:[8,12,17,21]},
+    '18-25':{L:[10,14,19,24],P:[9,13,17,22]}
+  },
+  pushup: {
+    '6-8':{L:[2,5,8,12],P:[1,4,7,10]},
+    '9-11':{L:[4,8,12,16],P:[3,7,11,14]},
+    '12-14':{L:[8,12,16,20],P:[6,10,14,18]},
+    '15-17':{L:[10,15,20,26],P:[8,13,18,23]},
+    '18-25':{L:[12,17,23,30],P:[10,15,20,26]}
+  },
+  illinois: {
+    '6-8':{L:[26.0,24.0,22.0,20.0],P:[27.0,25.0,23.0,21.0]},
+    '9-11':{L:[23.5,22.0,20.5,19.0],P:[24.5,23.0,21.0,19.5]},
+    '12-14':{L:[20.5,19.0,17.5,16.0],P:[21.5,20.0,18.0,16.5]},
+    '15-17':{L:[19.5,18.0,16.5,15.0],P:[20.5,19.0,17.0,15.5]},
+    '18-25':{L:[19.0,17.6,16.0,14.5],P:[20.0,18.6,17.0,15.5]}
+  },
+  sprint20: {
+    '6-8':{L:[5.20,4.80,4.40,4.10],P:[5.40,5.00,4.60,4.25]},
+    '9-11':{L:[4.60,4.30,3.95,3.65],P:[4.80,4.50,4.10,3.80]},
+    '12-14':{L:[4.20,3.90,3.60,3.30],P:[4.40,4.10,3.75,3.45]},
+    '15-17':{L:[4.05,3.78,3.50,3.25],P:[4.20,3.92,3.60,3.35]},
+    '18-25':{L:[4.00,3.72,3.45,3.20],P:[4.10,3.82,3.55,3.30]}
+  },
+  bleep: {
+    '6-8':{L:[3.5,4.5,5.5,6.5],P:[3.0,4.0,5.0,6.0]},
+    '9-11':{L:[4.5,5.5,6.8,8.0],P:[4.0,5.0,6.3,7.5]},
+    '12-14':{L:[5.0,6.5,8.0,9.5],P:[4.5,6.0,7.5,9.0]},
+    '15-17':{L:[6.0,7.5,9.0,10.5],P:[5.5,7.0,8.5,10.0]},
+    '18-25':{L:[6.5,8.0,9.5,11.0],P:[6.0,7.5,9.0,10.5]}
+  },
+  singleleg: {
+    '6-8':{L:[4,8,15,25],P:[5,9,16,26]},
+    '9-11':{L:[6,10,18,30],P:[7,11,19,32]},
+    '12-14':{L:[8,15,25,40],P:[8,15,25,40]},
+    '15-17':{L:[9,16,28,42],P:[9,16,28,42]},
+    '18-25':{L:[10,18,30,45],P:[10,18,30,45]}
+  }
+};
+
+const TEST_META = [
+  {key:'situp', label:'Sit-up 30 Detik', unit:'kali', direction:'higher'},
+  {key:'pushup', label:'Push-up Maksimal', unit:'kali', direction:'higher'},
+  {key:'illinois', label:'Illinois Agility Test', unit:'detik', direction:'lower'},
+  {key:'sprint20', label:'Sprint 20 Meter', unit:'detik', direction:'lower'},
+  {key:'bleep', label:'Bleep Test', unit:'level', direction:'higher'},
+  {key:'singleleg', label:'Single Leg Stance', unit:'detik', direction:'higher'}
+];
+
+const SABUK_TARGET = { Putih:5, Merah:10, Kuning:15, Biru:20, Coklat:25, Hitam:30 };
+
+function getAgeGroup(age){
+  if(age>=6 && age<=8) return '6-8';
+  if(age>=9 && age<=11) return '9-11';
+  if(age>=12 && age<=14) return '12-14';
+  if(age>=15 && age<=17) return '15-17';
+  if(age>=18 && age<=25) return '18-25';
+  return null;
+}
+
+function classify(value, bounds, direction){
+  if(direction==='higher'){
+    if(value<=bounds[0]) return 0;
+    if(value<=bounds[1]) return 1;
+    if(value<=bounds[2]) return 2;
+    if(value<=bounds[3]) return 3;
+    return 4;
+  } else {
+    if(value>=bounds[0]) return 0;
+    if(value>=bounds[1]) return 1;
+    if(value>=bounds[2]) return 2;
+    if(value>=bounds[3]) return 3;
+    return 4;
+  }
+}
+
+function findRow(rows, key){
+  return (rows||[]).find(r=>r.key===key);
+}
+
 let allEntries = [];
 let openId = null;
+let editingId = null;
 
 function setSyncStatus(msg, cls){
   const el = document.getElementById('sync-status');
@@ -389,13 +558,34 @@ function renderList(entries){
     wrap.appendChild(card);
 
     if(openId === e.id){
-      renderDetail(e);
+      if(editingId === e.id){
+        renderEditForm(e);
+      } else {
+        renderDetail(e);
+      }
     }
   });
 }
 
 function toggleDetail(e){
-  openId = (openId === e.id) ? null : e.id;
+  if(openId === e.id){
+    openId = null;
+    editingId = null;
+  } else {
+    openId = e.id;
+    editingId = null;
+  }
+  applyFilters();
+}
+
+function startEdit(e){
+  openId = e.id;
+  editingId = e.id;
+  applyFilters();
+}
+
+function cancelEdit(){
+  editingId = null;
   applyFilters();
 }
 
@@ -442,8 +632,17 @@ function renderDetail(e){
     extraRows.forEach(row=>{ html += renderTestRow(row); });
   }
 
-  html += `<button class="del" data-id="${e.id}">Hapus Data Atlet Ini</button>`;
+  html += `
+    <div class="action-row">
+      <button class="edit-btn" data-id="${e.id}">Edit Data</button>
+      <button class="del" data-id="${e.id}">Hapus Data Atlet Ini</button>
+    </div>`;
   detail.innerHTML = html;
+
+  detail.querySelector('.edit-btn').addEventListener('click', (ev)=>{
+    ev.stopPropagation();
+    startEdit(e);
+  });
 
   detail.querySelector('.del').addEventListener('click', async (ev)=>{
     ev.stopPropagation();
@@ -455,6 +654,180 @@ function renderDetail(e){
       alert('Gagal menghapus data.');
     }
   });
+}
+
+function renderEditForm(e){
+  const detail = document.getElementById('detail-'+e.id);
+  if(!detail) return;
+  detail.classList.add('open');
+
+  const rows = e.rows||[];
+  const hafalanRow = findRow(rows,'hafalan');
+  const patahanRow = findRow(rows,'patahan');
+
+  let sabukVal = '';
+  if(hafalanRow && hafalanRow.filled){
+    const m = (hafalanRow.label||'').match(/Sabuk\s+(\S+)\)/);
+    if(m) sabukVal = m[1];
+  }
+  const hafalVal = (hafalanRow && hafalanRow.filled) ? hafalanRow.val : '';
+  const patahanVal = (patahanRow && patahanRow.filled)
+    ? (patahanRow.val === 'Patah' ? 'ya' : 'tidak')
+    : '';
+
+  const id = e.id;
+
+  let testFieldsHtml = '';
+  TEST_META.forEach(t=>{
+    const row = findRow(rows, t.key);
+    const val = (row && row.filled) ? row.val : '';
+    testFieldsHtml += `
+      <div class="edit-field">
+        <label>${t.label} <span class="unit">${t.unit}</span></label>
+        <input id="edit-${t.key}-${id}" type="number" step="any" value="${val}" placeholder="kosongkan jika tidak diuji">
+      </div>`;
+  });
+
+  detail.innerHTML = `
+    <div class="edit-form">
+      <div class="edit-field" style="margin-bottom:12px;">
+        <label>Nama</label>
+        <input id="edit-nama-${id}" type="text" value="${(e.nama||'').replace(/"/g,'&quot;')}">
+      </div>
+      <div class="edit-grid">
+        <div class="edit-field">
+          <label>Usia (tahun)</label>
+          <input id="edit-usia-${id}" type="number" min="6" max="25" value="${e.usia!==undefined?e.usia:''}">
+        </div>
+        <div class="edit-field">
+          <label>Jenis Kelamin</label>
+          <select id="edit-jk-${id}">
+            <option value="L" ${e.jk==='L'?'selected':''}>Laki-laki</option>
+            <option value="P" ${e.jk==='P'?'selected':''}>Perempuan</option>
+          </select>
+        </div>
+        <div class="edit-field">
+          <label>Tanggal</label>
+          <input id="edit-tanggal-${id}" type="date" value="${e.tanggal||''}">
+        </div>
+      </div>
+      <div id="edit-warn-${id}" class="edit-warn">Norma penilaian hanya tersedia untuk usia 6–25 tahun. Kategori tidak dapat dihitung untuk usia ini.</div>
+
+      <div class="edit-subhead">Hasil Tes</div>
+      <div class="test-edit-grid">${testFieldsHtml}</div>
+
+      <div class="edit-subhead">Tes Keagamaan &amp; Ketahanan</div>
+      <div class="edit-grid" style="grid-template-columns:1fr 1fr;">
+        <div class="edit-field">
+          <label>Tingkatan Sabuk</label>
+          <select id="edit-sabuk-${id}">
+            <option value="">— pilih sabuk —</option>
+            <option value="Putih" ${sabukVal==='Putih'?'selected':''}>Putih (target 5 surat)</option>
+            <option value="Merah" ${sabukVal==='Merah'?'selected':''}>Merah (target 10 surat)</option>
+            <option value="Kuning" ${sabukVal==='Kuning'?'selected':''}>Kuning (target 15 surat)</option>
+            <option value="Biru" ${sabukVal==='Biru'?'selected':''}>Biru (target 20 surat)</option>
+            <option value="Coklat" ${sabukVal==='Coklat'?'selected':''}>Coklat (target 25 surat)</option>
+            <option value="Hitam" ${sabukVal==='Hitam'?'selected':''}>Hitam (target 30 surat)</option>
+          </select>
+        </div>
+        <div class="edit-field">
+          <label>Jumlah Surat Dihafal</label>
+          <input id="edit-hafal-${id}" type="number" step="1" value="${hafalVal}">
+        </div>
+      </div>
+      <div class="edit-field" style="margin-bottom:12px;">
+        <label>Tes Patahan</label>
+        <select id="edit-patahan-${id}">
+          <option value="">— pilih hasil —</option>
+          <option value="ya" ${patahanVal==='ya'?'selected':''}>Patah (memenuhi)</option>
+          <option value="tidak" ${patahanVal==='tidak'?'selected':''}>Tidak Patah</option>
+        </select>
+      </div>
+
+      <div class="edit-actions">
+        <button class="btn-save" data-id="${id}">SIMPAN PERUBAHAN</button>
+        <button class="btn-cancel" data-id="${id}">Batal</button>
+      </div>
+    </div>
+  `;
+
+  const usiaInput = document.getElementById('edit-usia-'+id);
+  const warnEl = document.getElementById('edit-warn-'+id);
+  usiaInput.addEventListener('input', ()=>{
+    const age = parseFloat(usiaInput.value);
+    warnEl.style.display = (age && !getAgeGroup(age)) ? 'block' : 'none';
+  });
+
+  detail.querySelector('.btn-save').addEventListener('click', (ev)=>{
+    ev.stopPropagation();
+    saveEdit(id);
+  });
+  detail.querySelector('.btn-cancel').addEventListener('click', (ev)=>{
+    ev.stopPropagation();
+    cancelEdit();
+  });
+}
+
+async function saveEdit(id){
+  const nama = document.getElementById(`edit-nama-${id}`).value.trim() || 'Tanpa Nama';
+  const usia = parseFloat(document.getElementById(`edit-usia-${id}`).value);
+  const jk = document.getElementById(`edit-jk-${id}`).value;
+  const tanggal = document.getElementById(`edit-tanggal-${id}`).value || new Date().toISOString().slice(0,10);
+  const warnEl = document.getElementById(`edit-warn-${id}`);
+
+  if(!usia){ alert('Isi usia atlet terlebih dahulu.'); return; }
+  const ageGroup = getAgeGroup(usia);
+  if(!ageGroup){
+    warnEl.style.display = 'block';
+    return;
+  }
+  warnEl.style.display = 'none';
+
+  const rows = [];
+  let catSum = 0, catCount = 0;
+
+  TEST_META.forEach(t=>{
+    const raw = document.getElementById(`edit-${t.key}-${id}`).value;
+    if(raw===''){ rows.push({...t, filled:false}); return; }
+    const val = parseFloat(raw);
+    const bounds = NORMS[t.key][ageGroup][jk];
+    const catIdx = classify(val, bounds, t.direction);
+    catSum += catIdx; catCount++;
+    rows.push({...t, filled:true, val, catIdx});
+  });
+
+  const sabuk = document.getElementById(`edit-sabuk-${id}`).value;
+  const hafalRaw = document.getElementById(`edit-hafal-${id}`).value;
+  if(sabuk && hafalRaw!==''){
+    const hafal = parseFloat(hafalRaw);
+    const target = SABUK_TARGET[sabuk];
+    const memenuhi = hafal >= target;
+    const catIdx = memenuhi ? 4 : 1;
+    rows.push({key:'hafalan', label:`Hafalan (Sabuk ${sabuk})`, unit:'surat', filled:true, val:hafal, catIdx});
+    catSum += catIdx; catCount++;
+  } else {
+    rows.push({key:'hafalan', label:'Hafalan', unit:'surat', filled:false});
+  }
+
+  const patahan = document.getElementById(`edit-patahan-${id}`).value;
+  if(patahan){
+    const catIdx = patahan==='ya' ? 4 : 1;
+    rows.push({key:'patahan', label:'Tes Patahan', unit:'', filled:true, val:(patahan==='ya'?'Patah':'Tidak Patah'), catIdx});
+    catSum += catIdx; catCount++;
+  } else {
+    rows.push({key:'patahan', label:'Tes Patahan', unit:'', filled:false});
+  }
+
+  const overallIdx = catCount ? Math.round(catSum/catCount) : null;
+  const updated = {nama, usia, jk, tanggal, ageGroup, rows, overallIdx};
+
+  try{
+    await set(ref(db, 'uji_fisik/'+id), updated);
+    editingId = null;
+  }catch(err){
+    console.error(err);
+    alert('Gagal menyimpan perubahan.');
+  }
 }
 </script>
 
