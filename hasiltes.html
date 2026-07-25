@@ -550,10 +550,20 @@ function renderList(entries){
       <div class="detail" id="detail-${e.id}"></div>
     `;
 
-    card.addEventListener('click', (ev)=>{
-      if(ev.target.closest('.del')) return;
-      toggleDetail(e);
-    });
+    
+    // CARI BAGIAN INI DI FUNGSI renderList():
+card.addEventListener('click', (ev) => {
+  // Abaikan klik jika yang diklik adalah tombol hapus, tombol edit, ATAU elemen di dalam form/detail
+  if (
+    ev.target.closest('.del') || 
+    ev.target.closest('.edit-btn') || 
+    ev.target.closest('.detail')
+  ) {
+    return;
+  }
+
+  toggleDetail(e);
+});
 
     wrap.appendChild(card);
 
@@ -634,7 +644,7 @@ function renderDetail(e){
 
   html += `
     <div class="action-row">
-      <button class="edit-btn" data-id="${e.id}">Edit Data</button>
+      <button type="button" class="edit-btn" data-id="${e.id}">Edit Data</button>
       <button class="del" data-id="${e.id}">Hapus Data Atlet Ini</button>
     </div>`;
   detail.innerHTML = html;
@@ -745,8 +755,8 @@ function renderEditForm(e){
       </div>
 
       <div class="edit-actions">
-        <button class="btn-save" data-id="${id}">SIMPAN PERUBAHAN</button>
-        <button class="btn-cancel" data-id="${id}">Batal</button>
+        <button type="button" class="btn-save" data-id="${id}">SIMPAN PERUBAHAN</button>
+<button type="button" class="btn-cancel" data-id="${id}">Batal</button>
       </div>
     </div>
   `;
