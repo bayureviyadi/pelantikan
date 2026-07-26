@@ -74,10 +74,10 @@
 
   .filters{
     display:grid;
-    grid-template-columns:1fr 1fr 1fr;
+    grid-template-columns:1fr 1fr;
     gap:10px;
   }
-  @media (max-width:560px){ .filters{grid-template-columns:1fr 1fr;} }
+  @media (max-width:420px){ .filters{grid-template-columns:1fr;} }
   label{
     display:block;
     font-size:11px;
@@ -172,6 +172,21 @@
     padding-top:20px;
   }
 
+  /* Mini podium (per age-group) */
+  .podium.mini{
+    gap:8px;
+    margin-bottom:14px;
+  }
+  .podium.mini .podium-slot{
+    padding:10px 8px 10px;
+  }
+  .podium.mini .podium-slot.rank1{ padding-top:14px; }
+  .podium.mini .podium-rank{ font-size:22px; margin-bottom:4px; }
+  .podium.mini .podium-slot.rank1 .podium-rank{ font-size:26px; }
+  .podium.mini .podium-name{ font-size:14px; margin-bottom:2px; }
+  .podium.mini .podium-meta{ font-size:9px; }
+  .podium.mini .podium-score{ margin-top:6px; font-size:10px; padding:3px 7px; }
+
   .result-count{
     font-family:'JetBrains Mono',monospace;
     font-size:12px;
@@ -231,6 +246,206 @@
     padding:20px 0;
     text-align:center;
   }
+
+  .section-title{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:22px;
+    letter-spacing:.02em;
+    margin:0 0 4px;
+  }
+  .section-sub{
+    color:var(--text-dim);
+    font-size:13px;
+    margin:0 0 16px;
+  }
+  .filters3{
+    display:grid;
+    grid-template-columns:1.3fr 1fr 1fr;
+    gap:10px;
+  }
+  @media (max-width:560px){ .filters3{grid-template-columns:1fr 1fr;} }
+  @media (max-width:420px){ .filters3{grid-template-columns:1fr;} }
+
+  /* Age tabs */
+  .age-tabs{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding-bottom:4px;
+    margin:0 2px 16px;
+    scrollbar-width:none;
+  }
+  .age-tabs::-webkit-scrollbar{ display:none; }
+  .age-tab{
+    flex-shrink:0;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:.03em;
+    color:var(--text-dim);
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:9px 16px;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:border-color .15s,color .15s,background .15s;
+  }
+  .age-tab:hover{ color:var(--text); border-color:var(--text-dim); }
+  .age-tab.active{
+    background:var(--red);
+    border-color:var(--red);
+    color:#fff;
+  }
+  .age-tab .age-tab-count{ color:inherit; opacity:.7; margin-left:4px; }
+
+  /* Age-group sections */
+  .group-section{ margin-bottom:26px; }
+  .group-header{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    margin:0 2px 10px;
+    padding-bottom:8px;
+    border-bottom:1px solid var(--border);
+  }
+  .group-title{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:22px;
+    letter-spacing:.03em;
+    color:var(--gold);
+  }
+  .group-count{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--text-dim);
+  }
+
+  .rank-row{ cursor:pointer; transition:border-color .15s,transform .15s; }
+  .rank-row:hover{ border-color:var(--gold); transform:translateY(-1px); }
+  .rank-row:active{ transform:translateY(0); }
+
+  /* Detail modal */
+  .modal-overlay{
+    position:fixed; inset:0;
+    background:rgba(10,11,14,0.7);
+    backdrop-filter:blur(2px);
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    z-index:100;
+    padding:0;
+  }
+  @media (min-width:640px){
+    .modal-overlay{ align-items:center; padding:20px; }
+  }
+  .modal-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:16px 16px 0 0;
+    max-width:520px;
+    width:100%;
+    max-height:85vh;
+    overflow-y:auto;
+    padding:22px 20px 26px;
+    position:relative;
+  }
+  @media (min-width:640px){
+    .modal-card{ border-radius:16px; }
+  }
+  .modal-close{
+    position:absolute;
+    top:14px; right:14px;
+    width:30px; height:30px;
+    border-radius:50%;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    font-size:16px;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .modal-close:hover{ color:var(--text); border-color:var(--gold); }
+  .modal-eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:.14em;
+    color:var(--gold);
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  .modal-name{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:30px;
+    line-height:1.05;
+    margin-bottom:4px;
+    padding-right:30px;
+  }
+  .modal-meta{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--text-dim);
+    margin-bottom:16px;
+  }
+  .modal-score-band{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:14px 16px;
+    margin-bottom:18px;
+  }
+  .modal-score-num{
+    font-family:'JetBrains Mono',monospace;
+    font-size:26px;
+    font-weight:700;
+  }
+  .modal-score-cat{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    font-weight:700;
+    padding:4px 10px;
+    border-radius:6px;
+    color:#12151a;
+  }
+  .modal-section-title{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:.08em;
+    color:var(--text-dim);
+    text-transform:uppercase;
+    margin:0 0 10px;
+  }
+  .test-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:9px 0;
+    border-bottom:1px solid var(--border);
+  }
+  .test-row:last-child{ border-bottom:none; }
+  .test-name{ flex:1; font-size:13px; }
+  .test-value{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--text-dim);
+  }
+  .test-cat{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    font-weight:700;
+    padding:3px 8px;
+    border-radius:6px;
+    color:#12151a;
+    white-space:nowrap;
+  }
+  .test-empty{
+    color:var(--text-dim);
+    font-size:12px;
+    font-style:italic;
+  }
 </style>
 </head>
 <body>
@@ -244,17 +459,6 @@
 <main>
   <div class="card">
     <div class="filters">
-      <div class="field">
-        <label>Kelompok Usia</label>
-        <select id="q-usia">
-          <option value="">Semua</option>
-          <option value="6-8">6–8</option>
-          <option value="9-11">9–11</option>
-          <option value="12-14">12–14</option>
-          <option value="15-17">15–17</option>
-          <option value="18-25">18–25</option>
-        </select>
-      </div>
       <div class="field">
         <label>Jenis Kelamin</label>
         <select id="q-jk">
@@ -272,17 +476,53 @@
         </select>
       </div>
     </div>
-    <div class="note">Bandingkan dalam kelompok usia &amp; jenis kelamin yang sama untuk hasil paling adil, karena norma penilaian tiap kelompok berbeda.</div>
+    <div class="note">Peringkat dikelompokkan otomatis per kelompok usia, karena norma penilaian tiap kelompok berbeda. Ketuk atlet untuk melihat detail hasil tes.</div>
     <div id="sync-status" class="sync-note">Menghubungkan ke Firebase…</div>
   </div>
 
   <div class="podium" id="podium"></div>
 
   <div class="result-count" id="result-count"></div>
+  <div class="age-tabs" id="age-tabs"></div>
   <div id="list-wrap">
     <div class="roster-empty">Memuat data...</div>
   </div>
+
+  <div class="card" style="margin-top:8px;">
+    <div class="section-title">LEADERBOARD PER TES FISIK</div>
+    <p class="section-sub">Peringkat khusus untuk satu jenis tes fisik, dikelompokkan per usia.</p>
+    <div class="filters3">
+      <div class="field">
+        <label>Jenis Tes</label>
+        <select id="qt-test">
+          <option value="">Memuat...</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Jenis Kelamin</label>
+        <select id="qt-jk">
+          <option value="">Semua</option>
+          <option value="L">Laki-laki</option>
+          <option value="P">Perempuan</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Urutkan</label>
+        <select id="qt-sort">
+          <option value="score-desc">Skor tertinggi</option>
+          <option value="score-asc">Skor terendah</option>
+        </select>
+      </div>
+    </div>
+    <div class="result-count" id="test-result-count"></div>
+    <div class="age-tabs" id="age-tabs-test"></div>
+    <div id="test-list-wrap">
+      <div class="roster-empty">Memuat data...</div>
+    </div>
+  </div>
 </main>
+
+<div id="modal-root"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
@@ -323,6 +563,45 @@ function preciseScore(e){
   return sum / rows.length;
 }
 
+function testLabel(row, idx){
+  return row.name || row.nama || row.test || row.tes || row.label || ('Tes ' + (idx+1));
+}
+
+let testDefs = []; // [{idx, label}]
+
+function buildTestDefs(){
+  const labels = {};
+  allEntries.forEach(e=>{
+    (e.rows||[]).forEach((r, idx)=>{
+      if(labels[idx] !== undefined) return;
+      if(r && (r.filled || r.name || r.nama || r.test || r.tes || r.label)){
+        labels[idx] = testLabel(r, idx);
+      }
+    });
+  });
+  // fallback: make sure every row index up to the longest rows array has an entry
+  let maxLen = 0;
+  allEntries.forEach(e=>{ maxLen = Math.max(maxLen, (e.rows||[]).length); });
+  const defs = [];
+  for(let i=0;i<maxLen;i++){
+    defs.push({ idx: i, label: labels[i] || ('Tes ' + (i+1)) });
+  }
+  return defs;
+}
+
+function populateTestSelect(){
+  const sel = document.getElementById('qt-test');
+  const prevValue = sel.value;
+  if(testDefs.length === 0){
+    sel.innerHTML = '<option value="">Tidak ada data tes</option>';
+    return;
+  }
+  sel.innerHTML = testDefs.map(t => `<option value="${t.idx}">${t.label}</option>`).join('');
+  if(prevValue !== '' && testDefs.some(t=>String(t.idx)===prevValue)){
+    sel.value = prevValue;
+  }
+}
+
 onValue(rosterRef, (snapshot) => {
   const data = snapshot.val() || {};
   allEntries = Object.keys(data).map(id => {
@@ -331,46 +610,106 @@ onValue(rosterRef, (snapshot) => {
     return e;
   });
   setSyncStatus('Tersinkron dengan Firebase · ' + allEntries.length + ' atlet', 'ok');
+  testDefs = buildTestDefs();
+  populateTestSelect();
   applyFilters();
+  applyTestFilters();
 }, (err) => {
   console.error(err);
   setSyncStatus('Gagal terhubung ke Firebase.', 'err');
 });
 
 ['change'].forEach(evt=>{
-  document.getElementById('q-usia').addEventListener(evt, applyFilters);
   document.getElementById('q-jk').addEventListener(evt, applyFilters);
   document.getElementById('q-sort').addEventListener(evt, applyFilters);
+  document.getElementById('qt-test').addEventListener(evt, applyTestFilters);
+  document.getElementById('qt-jk').addEventListener(evt, applyTestFilters);
+  document.getElementById('qt-sort').addEventListener(evt, applyTestFilters);
 });
 
+const AGE_ORDER = ["6-8","9-11","12-14","15-17","18-25"];
+const DEFAULT_AGE_GROUP = "12-14";
+
+let selectedAgeMain = DEFAULT_AGE_GROUP;
+let selectedAgeTest = DEFAULT_AGE_GROUP;
+
+function renderAgeTabs(containerId, orderedKeys, countMap, selected, onSelect){
+  const el = document.getElementById(containerId);
+  if(orderedKeys.length === 0){ el.innerHTML = ''; return; }
+  // if the currently selected group has no data, fall back to the first available one
+  let active = orderedKeys.includes(selected) ? selected : orderedKeys[0];
+  el.innerHTML = orderedKeys.map(key => `
+    <button type="button" class="age-tab${key===active?' active':''}" data-key="${key}">
+      ${groupLabel(key)}<span class="age-tab-count">${countMap[key]||0}</span>
+    </button>`).join('');
+  el.querySelectorAll('.age-tab').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      onSelect(btn.getAttribute('data-key'));
+    });
+  });
+  return active;
+}
+
+function sortEntries(list, sort){
+  const arr = list.slice();
+  if(sort === 'score-desc'){
+    arr.sort((a,b)=> b.score - a.score || (b.tanggal||'').localeCompare(a.tanggal||''));
+  } else if(sort === 'score-asc'){
+    arr.sort((a,b)=> a.score - b.score || (b.tanggal||'').localeCompare(a.tanggal||''));
+  } else {
+    arr.sort((a,b)=> (b.tanggal||'').localeCompare(a.tanggal||''));
+  }
+  return arr;
+}
+
 function applyFilters(){
-  const usia = document.getElementById('q-usia').value;
   const jk = document.getElementById('q-jk').value;
   const sort = document.getElementById('q-sort').value;
 
   let filtered = allEntries.filter(e=>{
-    if(usia && e.ageGroup !== usia) return false;
     if(jk && e.jk !== jk) return false;
     return e.score !== null;
   });
 
-  if(sort === 'score-desc'){
-    filtered.sort((a,b)=> b.score - a.score || (b.tanggal||'').localeCompare(a.tanggal||''));
-  } else if(sort === 'score-asc'){
-    filtered.sort((a,b)=> a.score - b.score || (b.tanggal||'').localeCompare(a.tanggal||''));
-  } else {
-    filtered.sort((a,b)=> (b.tanggal||'').localeCompare(a.tanggal||''));
-  }
-
   document.getElementById('result-count').textContent =
     filtered.length + ' atlet dalam peringkat ini';
 
-  renderPodium(sort === 'score-asc' ? [] : filtered.slice(0,3));
-  renderList(filtered);
+  const overallSorted = sortEntries(filtered, sort);
+  renderPodium(sort === 'score-asc' ? [] : overallSorted.slice(0,3));
+  renderGrouped(filtered, sort);
 }
 
 function scoreToCatIdx(score){
   return Math.round(score);
+}
+
+function podiumSlotHtml(e, rank, showAgeGroup){
+  if(!e){
+    return `<div class="podium-slot rank${rank}"><div class="podium-empty">—</div></div>`;
+  }
+  const catIdx = scoreToCatIdx(e.score);
+  return `
+    <div class="podium-slot rank${rank}" data-id="${e.id}">
+      <div class="podium-rank">${rank===1?'★1':'#'+rank}</div>
+      <div class="podium-name">${e.nama}</div>
+      <div class="podium-meta">${e.usia} th · ${e.jk==='L'?'L':'P'}${showAgeGroup ? ' · '+(e.ageGroup||'-') : ''}</div>
+      <div class="podium-score" style="background:${CAT_COLORS[catIdx]};color:#12151a;">${e.score.toFixed(2)}</div>
+    </div>`;
+}
+
+function podiumInnerHtml(top3, showAgeGroup){
+  const order = [1,0,2]; // display order: 2nd, 1st, 3rd
+  return order.map(idx => podiumSlotHtml(top3[idx], idx+1, showAgeGroup)).join('');
+}
+
+function wirePodiumClicks(container){
+  container.querySelectorAll('.podium-slot[data-id]').forEach(slot=>{
+    slot.addEventListener('click', ()=>{
+      const id = slot.getAttribute('data-id');
+      const entry = allEntries.find(e=>e.id === id);
+      if(entry) openDetail(entry);
+    });
+  });
 }
 
 function renderPodium(top3){
@@ -379,49 +718,258 @@ function renderPodium(top3){
     podium.innerHTML = '<div class="podium-empty" style="grid-column:1/-1;text-align:center;">Belum cukup data untuk podium.</div>';
     return;
   }
-  const order = [1,0,2]; // display order: 2nd, 1st, 3rd
-  let html = '';
-  order.forEach(idx=>{
-    const e = top3[idx];
-    const rank = idx+1;
-    if(!e){
-      html += `<div class="podium-slot rank${rank}"><div class="podium-empty">—</div></div>`;
-      return;
-    }
-    const catIdx = scoreToCatIdx(e.score);
-    html += `
-      <div class="podium-slot rank${rank}">
-        <div class="podium-rank">${rank===1?'★1':'#'+rank}</div>
-        <div class="podium-name">${e.nama}</div>
-        <div class="podium-meta">${e.usia} th · ${e.jk==='L'?'L':'P'} · ${e.ageGroup||'-'}</div>
-        <div class="podium-score" style="background:${CAT_COLORS[catIdx]};color:#12151a;">${e.score.toFixed(2)}</div>
-      </div>`;
-  });
-  podium.innerHTML = html;
+  podium.innerHTML = podiumInnerHtml(top3, true);
+  wirePodiumClicks(podium);
 }
 
-function renderList(entries){
+function groupLabel(g){
+  return g ? g + ' TAHUN' : 'TANPA KELOMPOK';
+}
+
+function renderGrouped(entries, sort){
   const wrap = document.getElementById('list-wrap');
   if(entries.length===0){
+    document.getElementById('age-tabs').innerHTML = '';
     wrap.innerHTML = '<div class="roster-empty">Tidak ada atlet yang cocok dengan filter ini.</div>';
     return;
   }
+
+  // group by ageGroup
+  const groups = {};
+  entries.forEach(e=>{
+    const key = e.ageGroup || '-';
+    (groups[key] = groups[key] || []).push(e);
+  });
+
+  // order groups: known age groups first (in AGE_ORDER), then any others
+  const knownKeys = AGE_ORDER.filter(k=>groups[k]);
+  const otherKeys = Object.keys(groups).filter(k=>!AGE_ORDER.includes(k));
+  const orderedKeys = knownKeys.concat(otherKeys);
+
+  const countMap = {};
+  orderedKeys.forEach(k => countMap[k] = groups[k].length);
+
+  const active = renderAgeTabs('age-tabs', orderedKeys, countMap, selectedAgeMain, (key)=>{
+    selectedAgeMain = key;
+    renderGrouped(entries, sort);
+  });
+  selectedAgeMain = active;
+
   let html = '';
-  entries.forEach((e, i)=>{
+  const key = active;
+  const groupEntries = sortEntries(groups[key], sort);
+  html += `<div class="group-section">
+    <div class="group-header">
+      <div class="group-title">${groupLabel(key)}</div>
+      <div class="group-count">${groupEntries.length} atlet</div>
+    </div>`;
+  if(sort !== 'score-asc'){
+    html += `<div class="podium mini">${podiumInnerHtml(groupEntries.slice(0,3), false)}</div>`;
+  }
+  groupEntries.forEach((e, i)=>{
     const rank = i+1;
     const catIdx = scoreToCatIdx(e.score);
     html += `
-      <div class="rank-row">
+      <div class="rank-row" data-id="${e.id}">
         <div class="rank-num${rank<=3?' top':''}">${rank}</div>
         <div class="rank-info">
           <div class="rank-name">${e.nama}</div>
-          <div class="rank-meta">${e.usia} th · ${e.jk==='L'?'Laki-laki':'Perempuan'} · ${e.ageGroup||'-'} · ${e.tanggal||'-'}</div>
+          <div class="rank-meta">${e.usia} th · ${e.jk==='L'?'Laki-laki':'Perempuan'} · ${e.tanggal||'-'}</div>
         </div>
         <div class="rank-score">${e.score.toFixed(2)}</div>
         <div class="rank-badge" style="background:${CAT_COLORS[catIdx]};color:#12151a;">${CATS[catIdx].toUpperCase()}</div>
       </div>`;
   });
+  html += `</div>`;
   wrap.innerHTML = html;
+
+  wirePodiumClicks(wrap);
+  wrap.querySelectorAll('.rank-row').forEach(row=>{
+    row.addEventListener('click', ()=>{
+      const id = row.getAttribute('data-id');
+      const entry = allEntries.find(e=>e.id === id);
+      if(entry) openDetail(entry);
+    });
+  });
+}
+
+function sortByTest(list, testIdx, sort){
+  const withRow = list.map(e=>{
+    const row = (e.rows||[])[testIdx];
+    return { e, row };
+  }).filter(x => x.row && x.row.filled && typeof x.row.catIdx === 'number');
+
+  withRow.sort((a,b)=>{
+    const catDiff = sort === 'score-asc' ? (a.row.catIdx - b.row.catIdx) : (b.row.catIdx - a.row.catIdx);
+    if(catDiff !== 0) return catDiff;
+    const av = typeof a.row.value === 'number' ? a.row.value : null;
+    const bv = typeof b.row.value === 'number' ? b.row.value : null;
+    if(av !== null && bv !== null && av !== bv){
+      return sort === 'score-asc' ? (av - bv) : (bv - av);
+    }
+    return (b.e.tanggal||'').localeCompare(a.e.tanggal||'');
+  });
+
+  return withRow;
+}
+
+function applyTestFilters(){
+  const testSel = document.getElementById('qt-test').value;
+  const jk = document.getElementById('qt-jk').value;
+  const sort = document.getElementById('qt-sort').value;
+  const wrap = document.getElementById('test-list-wrap');
+
+  if(testSel === ''){
+    document.getElementById('age-tabs-test').innerHTML = '';
+    document.getElementById('test-result-count').textContent = '';
+    wrap.innerHTML = '<div class="roster-empty">Belum ada jenis tes yang tersedia.</div>';
+    return;
+  }
+  const testIdx = parseInt(testSel, 10);
+  const testDef = testDefs.find(t => t.idx === testIdx);
+
+  let filtered = allEntries.filter(e=>{
+    if(jk && e.jk !== jk) return false;
+    return true;
+  });
+
+  const ranked = sortByTest(filtered, testIdx, sort);
+
+  document.getElementById('test-result-count').textContent =
+    ranked.length + ' atlet memiliki hasil untuk "' + (testDef ? testDef.label : 'tes ini') + '"';
+
+  if(ranked.length === 0){
+    document.getElementById('age-tabs-test').innerHTML = '';
+    wrap.innerHTML = '<div class="roster-empty">Belum ada atlet dengan hasil tes ini.</div>';
+    return;
+  }
+
+  // group ranked results by ageGroup, preserving the per-test rank order within each group
+  const groups = {};
+  ranked.forEach(x=>{
+    const key = x.e.ageGroup || '-';
+    (groups[key] = groups[key] || []).push(x);
+  });
+  const knownKeys = AGE_ORDER.filter(k=>groups[k]);
+  const otherKeys = Object.keys(groups).filter(k=>!AGE_ORDER.includes(k));
+  const orderedKeys = knownKeys.concat(otherKeys);
+
+  const countMap = {};
+  orderedKeys.forEach(k => countMap[k] = groups[k].length);
+
+  const active = renderAgeTabs('age-tabs-test', orderedKeys, countMap, selectedAgeTest, (key)=>{
+    selectedAgeTest = key;
+    applyTestFilters();
+  });
+  selectedAgeTest = active;
+
+  let html = '';
+  const key = active;
+  const groupItems = groups[key];
+  html += `<div class="group-section">
+    <div class="group-header">
+      <div class="group-title">${groupLabel(key)}</div>
+      <div class="group-count">${groupItems.length} atlet</div>
+    </div>`;
+  if(sort !== 'score-asc'){
+    const order = [1,0,2];
+    html += `<div class="podium mini">` + order.map(idx=>{
+      const x = groupItems[idx];
+      if(!x) return `<div class="podium-slot rank${idx+1}"><div class="podium-empty">—</div></div>`;
+      const rank = idx+1;
+      const valueText = (x.row.value !== undefined && x.row.value !== null && x.row.value !== '') ? x.row.value : x.e.score.toFixed(2);
+      return `
+        <div class="podium-slot rank${rank}" data-id="${x.e.id}">
+          <div class="podium-rank">${rank===1?'★1':'#'+rank}</div>
+          <div class="podium-name">${x.e.nama}</div>
+          <div class="podium-meta">${x.e.usia} th · ${x.e.jk==='L'?'L':'P'}</div>
+          <div class="podium-score" style="background:${CAT_COLORS[x.row.catIdx]};color:#12151a;">${valueText}</div>
+        </div>`;
+    }).join('') + `</div>`;
+  }
+  groupItems.forEach((x, i)=>{
+    const rank = i+1;
+    const e = x.e;
+    const row = x.row;
+    const valueText = (row.value !== undefined && row.value !== null && row.value !== '') ? row.value : null;
+    html += `
+      <div class="rank-row" data-id="${e.id}">
+        <div class="rank-num${rank<=3?' top':''}">${rank}</div>
+        <div class="rank-info">
+          <div class="rank-name">${e.nama}</div>
+          <div class="rank-meta">${e.usia} th · ${e.jk==='L'?'Laki-laki':'Perempuan'} · ${e.tanggal||'-'}</div>
+        </div>
+        ${valueText !== null ? `<div class="rank-score">${valueText}</div>` : ''}
+        <div class="rank-badge" style="background:${CAT_COLORS[row.catIdx]};color:#12151a;">${CATS[row.catIdx].toUpperCase()}</div>
+      </div>`;
+  });
+  html += `</div>`;
+  wrap.innerHTML = html;
+
+  wirePodiumClicks(wrap);
+  wrap.querySelectorAll('.rank-row').forEach(rowEl=>{
+    rowEl.addEventListener('click', ()=>{
+      const id = rowEl.getAttribute('data-id');
+      const entry = allEntries.find(e=>e.id === id);
+      if(entry) openDetail(entry);
+    });
+  });
+}
+
+function openDetail(e){
+  const catIdx = scoreToCatIdx(e.score);
+  const rows = e.rows || [];
+
+  let rowsHtml = '';
+  if(rows.length === 0){
+    rowsHtml = '<div class="test-empty">Belum ada rincian tes untuk atlet ini.</div>';
+  } else {
+    rows.forEach((r, i)=>{
+      if(!r.filled){
+        rowsHtml += `
+          <div class="test-row">
+            <div class="test-name">${testLabel(r, i)}</div>
+            <div class="test-cat" style="background:var(--border);color:var(--text-dim);">BELUM DIISI</div>
+          </div>`;
+        return;
+      }
+      const rIdx = typeof r.catIdx === 'number' ? r.catIdx : null;
+      const valueText = (r.value !== undefined && r.value !== null && r.value !== '') ? r.value : null;
+      rowsHtml += `
+        <div class="test-row">
+          <div class="test-name">${testLabel(r, i)}</div>
+          ${valueText !== null ? `<div class="test-value">${valueText}</div>` : ''}
+          ${rIdx !== null ? `<div class="test-cat" style="background:${CAT_COLORS[rIdx]};">${CATS[rIdx]}</div>` : ''}
+        </div>`;
+    });
+  }
+
+  const modalRoot = document.getElementById('modal-root');
+  modalRoot.innerHTML = `
+    <div class="modal-overlay" id="modal-overlay">
+      <div class="modal-card">
+        <button class="modal-close" id="modal-close" aria-label="Tutup">✕</button>
+        <div class="modal-eyebrow">${e.ageGroup ? e.ageGroup + ' tahun' : 'Detail Atlet'}</div>
+        <div class="modal-name">${e.nama}</div>
+        <div class="modal-meta">${e.usia} th · ${e.jk==='L'?'Laki-laki':'Perempuan'} · ${e.tanggal||'-'}</div>
+        <div class="modal-score-band">
+          <div class="modal-score-num">${e.score.toFixed(2)}</div>
+          <div class="modal-score-cat" style="background:${CAT_COLORS[catIdx]};">${CATS[catIdx].toUpperCase()}</div>
+        </div>
+        <div class="modal-section-title">Rincian Hasil Tes</div>
+        ${rowsHtml}
+      </div>
+    </div>`;
+
+  const overlay = document.getElementById('modal-overlay');
+  document.getElementById('modal-close').addEventListener('click', closeDetail);
+  overlay.addEventListener('click', (ev)=>{
+    if(ev.target === overlay) closeDetail();
+  });
+}
+
+function closeDetail(){
+  document.getElementById('modal-root').innerHTML = '';
 }
 </script>
 

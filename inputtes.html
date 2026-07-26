@@ -375,6 +375,8 @@
           <option value="Biru">Biru (target 20 surat)</option>
           <option value="Coklat">Coklat (target 25 surat)</option>
           <option value="Hitam">Hitam (target 30 surat)</option>
+          <option value="Hitam Strip I">Hitam Strip I (target 35 surat)</option>
+          <option value="Hitam Strip II">Hitam Strip II (target 40 surat)</option>
         </select>
       </div>
       <div class="field">
@@ -553,7 +555,7 @@ function hitungHasil(){
   });
 
   // Tes keagamaan & ketahanan
-  const sabukTarget = { Putih:5, Merah:10, Kuning:15, Biru:20, Coklat:25, Hitam:30 };
+  const sabukTarget = { Putih:5, Merah:10, Kuning:15, Biru:20, Coklat:25, Hitam:30, 'Hitam Strip I':35, 'Hitam Strip II':40 };
   const sabuk = document.getElementById('t-sabuk').value;
   const hafalRaw = document.getElementById('t-hafal').value;
   if(sabuk && hafalRaw!==''){

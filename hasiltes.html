@@ -445,7 +445,7 @@ const TEST_META = [
   {key:'singleleg', label:'Single Leg Stance', unit:'detik', direction:'higher'}
 ];
 
-const SABUK_TARGET = { Putih:5, Merah:10, Kuning:15, Biru:20, Coklat:25, Hitam:30 };
+const SABUK_TARGET = { Putih:5, Merah:10, Kuning:15, Biru:20, Coklat:25, Hitam:30, 'Hitam Strip I':35, 'Hitam Strip II':40 };
 
 function getAgeGroup(age){
   if(age>=6 && age<=8) return '6-8';
@@ -677,7 +677,7 @@ function renderEditForm(e){
 
   let sabukVal = '';
   if(hafalanRow && hafalanRow.filled){
-    const m = (hafalanRow.label||'').match(/Sabuk\s+(\S+)\)/);
+    const m = (hafalanRow.label||'').match(/Sabuk\s+(.+)\)/);
     if(m) sabukVal = m[1];
   }
   const hafalVal = (hafalanRow && hafalanRow.filled) ? hafalanRow.val : '';
@@ -738,6 +738,8 @@ function renderEditForm(e){
             <option value="Biru" ${sabukVal==='Biru'?'selected':''}>Biru (target 20 surat)</option>
             <option value="Coklat" ${sabukVal==='Coklat'?'selected':''}>Coklat (target 25 surat)</option>
             <option value="Hitam" ${sabukVal==='Hitam'?'selected':''}>Hitam (target 30 surat)</option>
+            <option value="Hitam Strip I" ${sabukVal==='Hitam Strip I'?'selected':''}>Hitam Strip I (target 35 surat)</option>
+            <option value="Hitam Strip II" ${sabukVal==='Hitam Strip II'?'selected':''}>Hitam Strip II (target 40 surat)</option>
           </select>
         </div>
         <div class="edit-field">
