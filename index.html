@@ -98,6 +98,20 @@
   }
   select:focus{ outline:none; border-color:var(--gold); }
 
+  input[type="text"]{
+    width:100%;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:11px 12px;
+    border-radius:8px;
+    font-size:15px;
+    font-family:'Inter',sans-serif;
+  }
+  input[type="text"]::placeholder{ color:var(--text-dim); }
+  input[type="text"]:focus{ outline:none; border-color:var(--gold); }
+  .search-field{ margin-bottom:10px; }
+
   .sync-note{
     font-family:'JetBrains Mono',monospace;
     font-size:11px;
@@ -191,7 +205,94 @@
     font-family:'JetBrains Mono',monospace;
     font-size:12px;
     color:var(--text-dim);
+  }
+
+  .result-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
     margin:14px 2px 10px;
+    flex-wrap:wrap;
+  }
+
+  .view-toggle{
+    display:flex;
+    gap:6px;
+    flex-shrink:0;
+  }
+  .view-btn{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:.03em;
+    color:var(--text-dim);
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:8px 11px;
+    cursor:pointer;
+    transition:border-color .15s,color .15s,background .15s;
+  }
+  .view-btn:hover{ color:var(--text); border-color:var(--text-dim); }
+  .view-btn.active{
+    background:var(--red);
+    border-color:var(--red);
+    color:#fff;
+  }
+
+  .roster-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:8px;
+  }
+  @media (max-width:420px){ .roster-grid{grid-template-columns:1fr;} }
+  .grid-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:14px;
+    cursor:pointer;
+    transition:border-color .15s,transform .15s;
+  }
+  .grid-card:hover{ border-color:var(--gold); transform:translateY(-1px); }
+  .grid-card:active{ transform:translateY(0); }
+  .grid-rank{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:20px;
+    color:var(--text-dim);
+    line-height:1;
+    margin-bottom:6px;
+  }
+  .grid-rank.top{ color:var(--gold); }
+  .grid-name{
+    font-weight:600;
+    font-size:14px;
+    line-height:1.2;
+    margin-bottom:4px;
+    word-break:break-word;
+  }
+  .grid-meta{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    color:var(--text-dim);
+    margin-bottom:10px;
+  }
+  .grid-badge{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.04em;
+    padding:5px 8px;
+    border-radius:6px;
+    display:inline-block;
+  }
+  .grid-score{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--text-dim);
+    margin-top:8px;
   }
 
   .rank-row{
@@ -458,6 +559,10 @@
 
 <main>
   <div class="card">
+    <div class="search-field">
+      <label>Cari Nama Atlet</label>
+      <input type="text" id="q-search" placeholder="Ketik nama atlet...">
+    </div>
     <div class="filters">
       <div class="field">
         <label>Jenis Kelamin</label>
@@ -476,13 +581,17 @@
         </select>
       </div>
     </div>
-    <div class="note">Peringkat dikelompokkan otomatis per kelompok usia, karena norma penilaian tiap kelompok berbeda. Ketuk atlet untuk melihat detail hasil tes.</div>
+    <div class="note">Peringkat dikelompokkan per kelompok usia, karena norma penilaian tiap kelompok berbeda. Ketuk atlet untuk melihat detail hasil tes.</div>
     <div id="sync-status" class="sync-note">Menghubungkan ke Firebase…</div>
   </div>
 
-  <div class="podium" id="podium"></div>
-
-  <div class="result-count" id="result-count"></div>
+  <div class="result-bar">
+    <div class="result-count" id="result-count"></div>
+    <div class="view-toggle" id="view-toggle-main">
+      <button type="button" class="view-btn active" data-mode="list">☰ Daftar</button>
+      <button type="button" class="view-btn" data-mode="grid">▦ Kartu</button>
+    </div>
+  </div>
   <div class="age-tabs" id="age-tabs"></div>
   <div id="list-wrap">
     <div class="roster-empty">Memuat data...</div>
@@ -491,6 +600,10 @@
   <div class="card" style="margin-top:8px;">
     <div class="section-title">LEADERBOARD PER TES FISIK</div>
     <p class="section-sub">Peringkat khusus untuk satu jenis tes fisik, dikelompokkan per usia.</p>
+    <div class="search-field">
+      <label>Cari Nama Atlet</label>
+      <input type="text" id="qt-search" placeholder="Ketik nama atlet...">
+    </div>
     <div class="filters3">
       <div class="field">
         <label>Jenis Tes</label>
@@ -514,7 +627,13 @@
         </select>
       </div>
     </div>
-    <div class="result-count" id="test-result-count"></div>
+    <div class="result-bar">
+      <div class="result-count" id="test-result-count"></div>
+      <div class="view-toggle" id="view-toggle-test">
+        <button type="button" class="view-btn active" data-mode="list">☰ Daftar</button>
+        <button type="button" class="view-btn" data-mode="grid">▦ Kartu</button>
+      </div>
+    </div>
     <div class="age-tabs" id="age-tabs-test"></div>
     <div id="test-list-wrap">
       <div class="roster-empty">Memuat data...</div>
@@ -609,7 +728,7 @@ onValue(rosterRef, (snapshot) => {
     e.score = preciseScore(e);
     return e;
   });
-  setSyncStatus('Tersinkron dengan Firebase · ' + allEntries.length + ' atlet', 'ok');
+  setSyncStatus('Tersinkron · ' + allEntries.length + ' atlet', 'ok');
   testDefs = buildTestDefs();
   populateTestSelect();
   applyFilters();
@@ -626,6 +745,23 @@ onValue(rosterRef, (snapshot) => {
   document.getElementById('qt-jk').addEventListener(evt, applyTestFilters);
   document.getElementById('qt-sort').addEventListener(evt, applyTestFilters);
 });
+document.getElementById('q-search').addEventListener('input', applyFilters);
+document.getElementById('qt-search').addEventListener('input', applyTestFilters);
+
+let viewModeMain = 'list';
+let viewModeTest = 'list';
+
+function wireViewToggle(containerId, onChange){
+  const container = document.getElementById(containerId);
+  container.querySelectorAll('.view-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      container.querySelectorAll('.view-btn').forEach(b=>b.classList.toggle('active', b===btn));
+      onChange(btn.getAttribute('data-mode'));
+    });
+  });
+}
+wireViewToggle('view-toggle-main', (mode)=>{ viewModeMain = mode; applyFilters(); });
+wireViewToggle('view-toggle-test', (mode)=>{ viewModeTest = mode; applyTestFilters(); });
 
 const AGE_ORDER = ["6-8","9-11","12-14","15-17","18-25"];
 const DEFAULT_AGE_GROUP = "12-14";
@@ -665,17 +801,17 @@ function sortEntries(list, sort){
 function applyFilters(){
   const jk = document.getElementById('q-jk').value;
   const sort = document.getElementById('q-sort').value;
+  const search = document.getElementById('q-search').value.trim().toLowerCase();
 
   let filtered = allEntries.filter(e=>{
     if(jk && e.jk !== jk) return false;
+    if(search && !(e.nama||'').toLowerCase().includes(search)) return false;
     return e.score !== null;
   });
 
   document.getElementById('result-count').textContent =
     filtered.length + ' atlet dalam peringkat ini';
 
-  const overallSorted = sortEntries(filtered, sort);
-  renderPodium(sort === 'score-asc' ? [] : overallSorted.slice(0,3));
   renderGrouped(filtered, sort);
 }
 
@@ -712,14 +848,38 @@ function wirePodiumClicks(container){
   });
 }
 
-function renderPodium(top3){
-  const podium = document.getElementById('podium');
-  if(top3.length === 0){
-    podium.innerHTML = '<div class="podium-empty" style="grid-column:1/-1;text-align:center;">Belum cukup data untuk podium.</div>';
-    return;
+// scoreText may be null to omit the score display (e.g. test not filled)
+function rosterItemHtml(e, rank, catIdx, scoreText, mode){
+  if(mode === 'grid'){
+    return `
+      <div class="grid-card" data-id="${e.id}">
+        <div class="grid-rank${rank<=3?' top':''}">#${rank}</div>
+        <div class="grid-name">${e.nama}</div>
+        <div class="grid-meta">${e.usia} th · ${e.jk==='L'?'L':'P'} · ${e.tanggal||'-'}</div>
+        <div class="grid-badge" style="background:${CAT_COLORS[catIdx]};color:#12151a;">${CATS[catIdx].toUpperCase()}</div>
+        ${scoreText !== null ? `<div class="grid-score">${scoreText}</div>` : ''}
+      </div>`;
   }
-  podium.innerHTML = podiumInnerHtml(top3, true);
-  wirePodiumClicks(podium);
+  return `
+    <div class="rank-row" data-id="${e.id}">
+      <div class="rank-num${rank<=3?' top':''}">${rank}</div>
+      <div class="rank-info">
+        <div class="rank-name">${e.nama}</div>
+        <div class="rank-meta">${e.usia} th · ${e.jk==='L'?'Laki-laki':'Perempuan'} · ${e.tanggal||'-'}</div>
+      </div>
+      ${scoreText !== null ? `<div class="rank-score">${scoreText}</div>` : ''}
+      <div class="rank-badge" style="background:${CAT_COLORS[catIdx]};color:#12151a;">${CATS[catIdx].toUpperCase()}</div>
+    </div>`;
+}
+
+function wireRosterClicks(container){
+  container.querySelectorAll('.rank-row[data-id], .grid-card[data-id]').forEach(row=>{
+    row.addEventListener('click', ()=>{
+      const id = row.getAttribute('data-id');
+      const entry = allEntries.find(e=>e.id === id);
+      if(entry) openDetail(entry);
+    });
+  });
 }
 
 function groupLabel(g){
@@ -766,31 +926,17 @@ function renderGrouped(entries, sort){
   if(sort !== 'score-asc'){
     html += `<div class="podium mini">${podiumInnerHtml(groupEntries.slice(0,3), false)}</div>`;
   }
-  groupEntries.forEach((e, i)=>{
+  const itemsHtml = groupEntries.map((e, i)=>{
     const rank = i+1;
     const catIdx = scoreToCatIdx(e.score);
-    html += `
-      <div class="rank-row" data-id="${e.id}">
-        <div class="rank-num${rank<=3?' top':''}">${rank}</div>
-        <div class="rank-info">
-          <div class="rank-name">${e.nama}</div>
-          <div class="rank-meta">${e.usia} th · ${e.jk==='L'?'Laki-laki':'Perempuan'} · ${e.tanggal||'-'}</div>
-        </div>
-        <div class="rank-score">${e.score.toFixed(2)}</div>
-        <div class="rank-badge" style="background:${CAT_COLORS[catIdx]};color:#12151a;">${CATS[catIdx].toUpperCase()}</div>
-      </div>`;
-  });
+    return rosterItemHtml(e, rank, catIdx, e.score.toFixed(2), viewModeMain);
+  }).join('');
+  html += viewModeMain === 'grid' ? `<div class="roster-grid">${itemsHtml}</div>` : itemsHtml;
   html += `</div>`;
   wrap.innerHTML = html;
 
   wirePodiumClicks(wrap);
-  wrap.querySelectorAll('.rank-row').forEach(row=>{
-    row.addEventListener('click', ()=>{
-      const id = row.getAttribute('data-id');
-      const entry = allEntries.find(e=>e.id === id);
-      if(entry) openDetail(entry);
-    });
-  });
+  wireRosterClicks(wrap);
 }
 
 function sortByTest(list, testIdx, sort){
@@ -817,6 +963,7 @@ function applyTestFilters(){
   const testSel = document.getElementById('qt-test').value;
   const jk = document.getElementById('qt-jk').value;
   const sort = document.getElementById('qt-sort').value;
+  const search = document.getElementById('qt-search').value.trim().toLowerCase();
   const wrap = document.getElementById('test-list-wrap');
 
   if(testSel === ''){
@@ -830,6 +977,7 @@ function applyTestFilters(){
 
   let filtered = allEntries.filter(e=>{
     if(jk && e.jk !== jk) return false;
+    if(search && !(e.nama||'').toLowerCase().includes(search)) return false;
     return true;
   });
 
@@ -887,33 +1035,19 @@ function applyTestFilters(){
         </div>`;
     }).join('') + `</div>`;
   }
-  groupItems.forEach((x, i)=>{
+  const itemsHtml = groupItems.map((x, i)=>{
     const rank = i+1;
     const e = x.e;
     const row = x.row;
     const valueText = (row.value !== undefined && row.value !== null && row.value !== '') ? row.value : null;
-    html += `
-      <div class="rank-row" data-id="${e.id}">
-        <div class="rank-num${rank<=3?' top':''}">${rank}</div>
-        <div class="rank-info">
-          <div class="rank-name">${e.nama}</div>
-          <div class="rank-meta">${e.usia} th · ${e.jk==='L'?'Laki-laki':'Perempuan'} · ${e.tanggal||'-'}</div>
-        </div>
-        ${valueText !== null ? `<div class="rank-score">${valueText}</div>` : ''}
-        <div class="rank-badge" style="background:${CAT_COLORS[row.catIdx]};color:#12151a;">${CATS[row.catIdx].toUpperCase()}</div>
-      </div>`;
-  });
+    return rosterItemHtml(e, rank, row.catIdx, valueText, viewModeTest);
+  }).join('');
+  html += viewModeTest === 'grid' ? `<div class="roster-grid">${itemsHtml}</div>` : itemsHtml;
   html += `</div>`;
   wrap.innerHTML = html;
 
   wirePodiumClicks(wrap);
-  wrap.querySelectorAll('.rank-row').forEach(rowEl=>{
-    rowEl.addEventListener('click', ()=>{
-      const id = rowEl.getAttribute('data-id');
-      const entry = allEntries.find(e=>e.id === id);
-      if(entry) openDetail(entry);
-    });
-  });
+  wireRosterClicks(wrap);
 }
 
 function openDetail(e){
